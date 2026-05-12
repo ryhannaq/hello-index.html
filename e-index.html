@@ -42,17 +42,21 @@
 
         const jg1 = { x: 10, y: 200, w: 15, h: 100, score: 0, cor: "#FFF" };
         const jg2 = { x: 775, y: 200, w: 15, h: 100, score: 0, cor: "#FFF" };
-        const bola = { x: 400, y: 250, r: 10, velocidade: 7, dx: 7, dy: 7, cor: "#FFF" };
+        const bola = { x: 400, y: 250, r: 10, velocidade: 5, dx: 5, dy: 5, cor: "#FFF" };
 
         const teclas = {};
 
-        window.addEventListener("keydown", e => teclas[e.key.toLowerCase()] = true);
-        window.addEventListener("keyup", e => teclas[e.key.toLowerCase()] = false);
+        window.addEventListener("keydown", function(e) {
+            teclas[e.key.toLowerCase()] = true;
+        });
+        window.addEventListener("keyup", function(e) {
+            teclas[e.key.toLowerCase()] = false;
+        });
 
         function mudarModo(modo) {
             modoJogo = modo;
-            document.getElementById("btnSolo").classList.toggle("active", modo === "solo");
-            document.getElementById("btnMulti").classList.toggle("active", modo === "multi");
+            document.getElementById("btnSolo").className = (modo === "solo") ? "active" : "";
+            document.getElementById("btnMulti").className = (modo === "multi") ? "active" : "";
             
             const instrucoes = document.getElementById("textoControles");
             if (modo === "solo") {
@@ -91,8 +95,9 @@
         function resetarBola() {
             bola.x = canvas.width / 2;
             bola.y = canvas.height / 2;
-            bola.dx = -bola.dx;
-            bola.velocidade = 7;
+            bola.dx = (Math.random() > 0.5 ? 1 : -1) * 5;
+            bola.dy = (Math.random() > 0.5 ? 1 : -1) * 5;
+            bola.velocidade = 5;
         }
 
         function resetarJogoTotal() {
@@ -131,7 +136,7 @@
             let jogadorAtua = (bola.x < canvas.width / 2) ? jg1 : jg2;
 
             if (colisao(bola, jogadorAtua)) {
-                let pontoImpacto = (bola.y - (jogadorAtua.y + jogadorAtua.h / 2));
+                let pontoImpacto = (bola.y - (jogadorAtua.y + Math.top || jogadorAtua.y + jogadorAtua.h / 2));
                 pontoImpacto = pontoImpacto / (jogadorAtua.h / 2);
                 
                 let anguloRad = (Math.PI / 4) * pontoImpacto;
@@ -140,7 +145,7 @@
                 bola.dx = direcao * bola.velocidade * Math.cos(anguloRad);
                 bola.dy = bola.velocidade * Math.sin(anguloRad);
                 
-                bola.velocidade += 0.5;
+                bola.velocidade += 0.4;
             }
 
             if (bola.x - bola.r < 0) {
@@ -168,6 +173,8 @@
             requestAnimationFrame(loop);
         }
 
+        // Força o início automático da animação
+        resetarJogoTotal();
         loop();
     </script>
 </body>

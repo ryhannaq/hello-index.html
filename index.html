@@ -59,9 +59,7 @@
         <strong>Controles:</strong><br>
         Mover para CIMA: Tecla <strong>W</strong><br>
         Mover para BAIXO: Tecla <strong>S</strong><br>
-          if (keys['ArrowUp'] && rightPaddleY > 0) rightPaddleY -= 7;
-            if (keys['ArrowDown'] && rightPaddleY < canvas.height - paddleHeight) rightPaddleY += 7;
-                                                      
+                                                    
         <span style="color: #66ff66;">O segundo jogador é controlado automaticamente pela IA!</span>
     </div>
 
@@ -74,7 +72,7 @@
 
         // Objetos do Jogo
         const jogador = { x: 10, y: 200, w: 15, h: 100, score: 0, cor: "#FFF" };
-        const ia = { x: 775, y: 200, w: 15, h: 100, score: 0, cor: "#FFF" };
+        const ia = { x: 975, y: 200, w: 15, h: 100, score: 0, cor: "#FFF" };
         const bola = { x: 400, y: 250, r: 10, velocidade: 6, dx: 6, dy: 6, cor: "#FFF" };
 
         // Controle de Teclado

@@ -52,13 +52,16 @@
     <h1>Ping Pong</h1>
 
     <div id="gameContainer">
-        <canvas id="pong" width="800" height="500"></canvas>
+        <canvas id="pong" width="1000" height="500"></canvas>
     </div>
 
     <div id="instrucoes">
         <strong>Controles:</strong><br>
         Mover para CIMA: Tecla <strong>W</strong><br>
         Mover para BAIXO: Tecla <strong>S</strong><br>
+          if (keys['ArrowUp'] && rightPaddleY > 0) rightPaddleY -= 7;
+            if (keys['ArrowDown'] && rightPaddleY < canvas.height - paddleHeight) rightPaddleY += 7;
+                                                      
         <span style="color: #66ff66;">O segundo jogador é controlado automaticamente pela IA!</span>
     </div>
 

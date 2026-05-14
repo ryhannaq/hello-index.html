@@ -1,181 +1,371 @@
+ping pong robot nuvem
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Ping Pong vs IA</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #111;
-            color: #fff;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-        h1 {
-            margin-bottom: 20px;
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-        #gameContainer {
-            border: 4px solid #fff;
-            background-color: #000;
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
-        }
-        canvas {
-            display: block;
-        }
-        #instrucoes {
-            margin-top: 20px;
-            font-size: 1rem;
-            color: #aaa;
-            text-align: center;
-            line-height: 1.6;
-        }
-        strong {
-            color: #fff;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Cloud Pong</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      overflow:hidden;
+      height:100vh;
+
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      flex-direction:column;
+
+      background:linear-gradient(to bottom,#f7a8cc,#d5b7ff);
+    }
+
+    h1{
+      margin-bottom:15px;
+      color:white;
+      font-size:70px;
+      font-weight:900;
+
+      -webkit-text-stroke:5px #2e6cff;
+
+      text-shadow:
+      0 0 10px rgba(255,255,255,0.6);
+    }
+
+    .menu{
+      margin-bottom:20px;
+      text-align:center;
+    }
+
+    button{
+      padding:15px 30px;
+      margin:10px;
+
+      border:none;
+      border-radius:16px;
+
+      font-size:24px;
+      font-weight:bold;
+
+      cursor:pointer;
+
+      transition:0.2s;
+
+      color:white;
+
+      border:4px solid white;
+    }
+
+    .single{
+      background:#ff77bd;
+    }
+
+    .multi{
+      background:#3b82f6;
+    }
+
+    button:hover{
+      transform:scale(1.05);
+    }
+
+    .controls{
+      margin-top:10px;
+      color:#245cff;
+      font-size:24px;
+      font-weight:bold;
+    }
+
+    canvas{
+      border:5px solid #4b7dff;
+      border-radius:30px;
+
+      background:linear-gradient(to bottom,#f8b6d5,#d7bcff);
+
+      box-shadow:
+      0 0 30px rgba(255,255,255,0.4),
+      0 0 40px rgba(76,124,255,0.4);
+    }
+  </style>
 </head>
+
 <body>
 
-    <h1>Ping Pong</h1>
+  <h1>☁ CLOUD PONG ☁</h1>
 
-    <div id="gameContainer">
-        <canvas id="pong" width="800" height="500"></canvas>
+  <div class="menu">
+    <button class="single" onclick="setMode('single')">
+      SINGLEPLAYER
+    </button>
+
+    <button class="multi" onclick="setMode('multi')">
+      MULTIPLAYER
+    </button>
+
+    <div class="controls">
+      JOGADOR 1: W / S
+      &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+      JOGADOR 2: ↑ / ↓
     </div>
+  </div>
 
-    <div id="instrucoes">
-        <strong>Controles:</strong><br>
-        Mover para CIMA: Tecla <strong>W</strong><br>
-        Mover para BAIXO: Tecla <strong>S</strong><br>
-        <span style="color: #66ff66;">O segundo jogador é controlado automaticamente pela IA!</span>
-    </div>
+  <canvas id="gameCanvas" width="1400" height="720"></canvas>
 
-    <script>
-        const canvas = document.getElementById("pong");
-        const ctx = canvas.getContext("2d");
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-        // Configuração da IA (0.08 é Médio, 0.12 é Difícil)
-        const velocidadeIA = 0.08; 
+let gameMode = "single";
 
-        // Objetos do Jogo
-        const jogador = { x: 10, y: 200, w: 15, h: 100, score: 0, cor: "#FFF" };
-        const ia = { x: 775, y: 200, w: 15, h: 100, score: 0, cor: "#FFF" };
-        const bola = { x: 400, y: 250, r: 10, velocidade: 6, dx: 6, dy: 6, cor: "#FFF" };
+function setMode(mode){
+  gameMode = mode;
+}
 
-        // Controle de Teclado
-        const teclas = {};
-        window.addEventListener("keydown", e => teclas[e.key.toLowerCase()] = true);
-        window.addEventListener("keyup", e => teclas[e.key.toLowerCase()] = false);
+const player1 = {
+  x:80,
+  y:280,
+  width:40,
+  height:150,
+  speed:8,
+  score:0
+};
 
-        function dRet(x, y, w, h, cor) {
-            ctx.fillStyle = cor;
-            ctx.fillRect(x, y, w, h);
-        }
+const player2 = {
+  x:1280,
+  y:280,
+  width:40,
+  height:150,
+  speed:8,
+  score:0
+};
 
-        function dCirc(x, y, r, cor) {
-            ctx.fillStyle = cor;
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2, false);
-            ctx.closePath();
-            ctx.fill();
-        }
+const ball = {
+  x:700,
+  y:360,
+  radius:18,
+  speedX:6,
+  speedY:5
+};
 
-        function dRede() {
-            for (let i = 0; i <= canvas.height; i += 20) {
-                dRet(canvas.width / 2 - 1, i, 2, 10, "#444");
-            }
-        }
+const keys = {};
 
-        function dTexto(txt, x, y) {
-            ctx.fillStyle = "#FFF";
-            ctx.font = "bold 50px sans-serif";
-            ctx.fillText(txt, x, y);
-        }
+document.addEventListener("keydown",(e)=>{
+  keys[e.key]=true;
+});
 
-        function resetarBola() {
-            bola.x = canvas.width / 2;
-            bola.y = canvas.height / 2;
-            bola.dx = (Math.random() > 0.5 ? 1 : -1) * 6;
-            bola.dy = (Math.random() > 0.5 ? 1 : -1) * 6;
-            bola.velocidade = 6;
-        }
+document.addEventListener("keyup",(e)=>{
+  keys[e.key]=false;
+});
 
-        function colisao(b, p) {
-            return b.x + b.r > p.x && b.x - b.r < p.x + p.w && b.y + b.r > p.y && b.y - b.r < p.y + p.h;
-        }
+function drawCloud(x,y){
 
-        function atualizar() {
-            // Movimento Jogador (W / S)
-            if (teclas['w'] && jogador.y > 0) jogador.y -= 8;
-            if (teclas['s'] && jogador.y < canvas.height - jogador.h) jogador.y += 8;
+  ctx.fillStyle="white";
+  ctx.strokeStyle="#2e6cff";
+  ctx.lineWidth=6;
 
-            // Movimento Inteligência Artificial
-            let alvoY = bola.y - (ia.h / 2);
-            ia.y += (alvoY - ia.y) * velocidadeIA;
+  ctx.shadowColor="rgba(46,108,255,0.4)";
+  ctx.shadowBlur=15;
 
-            if (ia.y < 0) ia.y = 0;
-            if (ia.y > canvas.height - ia.h) ia.y = canvas.height - ia.h;
+  ctx.beginPath();
 
-            // Movimento da Bola
-            bola.x += bola.dx;
-            bola.y += bola.dy;
+  ctx.arc(x+10,y+40,28,0,Math.PI*2);
+  ctx.arc(x+25,y+15,30,0,Math.PI*2);
+  ctx.arc(x+50,y+40,30,0,Math.PI*2);
+  ctx.arc(x+30,y+70,35,0,Math.PI*2);
 
-            if (bola.y - bola.r < 0 || bola.y + bola.r > canvas.height) {
-                bola.dy = -bola.dy;
-            }
+  ctx.fill();
+  ctx.stroke();
 
-            let rebatedor = (bola.x < canvas.width / 2) ? jogador : ia;
+  ctx.shadowBlur=0;
+}
 
-            if (colisao(bola, rebatedor)) {
-                let pontoImpacto = (bola.y - (rebatedor.y + rebatedor.h / 2)) / (rebatedor.h / 2);
-                let anguloRad = (Math.PI / 4) * pontoImpacto;
-                let direcao = (bola.x < canvas.width / 2) ? 1 : -1;
-                
-                bola.dx = direcao * bola.velocidade * Math.cos(anguloRad);
-                bola.dy = bola.velocidade * Math.sin(anguloRad);
-                
-                bola.velocidade += 0.4;
-            }
+function drawBall(){
 
-            if (bola.x - bola.r < 0) {
-                ia.score++;
-                resetarBola();
-            } else if (bola.x + bola.r > canvas.width) {
-                jogador.score++;
-                resetarBola();
-            }
-        }
+  ctx.beginPath();
 
-        function renderizar() {
-            dRet(0, 0, canvas.width, canvas.height, "#000");
-            dRede();
-            dTexto(jogador.score, canvas.width / 4, 60);
-            dTexto(ia.score, 3 * canvas.width / 4, 60);
-            dRet(jogador.x, jogador.y, jogador.w, jogador.h, jogador.cor);
-            dRet(ia.x, ia.y, ia.w, ia.h, ia.cor);
-            dCirc(bola.x, bola.y, bola.r, bola.cor);
-        }
+  ctx.fillStyle="white";
+  ctx.strokeStyle="#2e6cff";
+  ctx.lineWidth=5;
 
-        function loop() {
-            atualizar();
-            renderizar();
-            requestAnimationFrame(loop);
-        }
+  ctx.shadowColor="rgba(255,255,255,0.8)";
+  ctx.shadowBlur=15;
 
-        resetarBola();
-        loop();
-    </script>
+  ctx.arc(ball.x,ball.y,ball.radius,0,Math.PI*2);
+
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.shadowBlur=0;
+}
+
+function drawCenterLine(){
+
+  ctx.strokeStyle="rgba(255,255,255,0.8)";
+  ctx.lineWidth=6;
+
+  ctx.setLineDash([20,20]);
+
+  ctx.beginPath();
+
+  ctx.moveTo(canvas.width/2,50);
+  ctx.lineTo(canvas.width/2,canvas.height-50);
+
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+}
+
+function drawScore(){
+
+  ctx.fillStyle="white";
+
+  ctx.strokeStyle="#2e6cff";
+  ctx.lineWidth=5;
+
+  ctx.font="bold 90px Arial";
+
+  ctx.strokeText(player1.score,580,110);
+  ctx.fillText(player1.score,580,110);
+
+  ctx.strokeText(player2.score,760,110);
+  ctx.fillText(player2.score,760,110);
+}
+
+function drawBackgroundClouds(){
+
+  ctx.globalAlpha=0.35;
+
+  drawMiniCloud(180,120);
+  drawMiniCloud(1050,170);
+  drawMiniCloud(950,500);
+  drawMiniCloud(300,520);
+  drawMiniCloud(500,640);
+
+  ctx.globalAlpha=1;
+}
+
+function drawMiniCloud(x,y){
+
+  ctx.fillStyle="white";
+
+  ctx.beginPath();
+
+  ctx.arc(x,y,25,0,Math.PI*2);
+  ctx.arc(x+30,y-10,30,0,Math.PI*2);
+  ctx.arc(x+60,y,25,0,Math.PI*2);
+
+  ctx.fill();
+}
+
+function movePlayers(){
+
+  if(keys["w"] && player1.y>0){
+    player1.y -= player1.speed;
+  }
+
+  if(keys["s"] && player1.y<canvas.height-120){
+    player1.y += player1.speed;
+  }
+
+  if(gameMode==="multi"){
+
+    if(keys["ArrowUp"] && player2.y>0){
+      player2.y -= player2.speed;
+    }
+
+    if(keys["ArrowDown"] && player2.y<canvas.height-120){
+      player2.y += player2.speed;
+    }
+
+  }else{
+
+    let center = player2.y + 60;
+
+    if(center < ball.y-35){
+      player2.y += 5;
+    }
+
+    if(center > ball.y+35){
+      player2.y -= 5;
+    }
+  }
+}
+
+function moveBall(){
+
+  ball.x += ball.speedX;
+  ball.y += ball.speedY;
+
+  if(ball.y < 15 || ball.y > canvas.height-15){
+    ball.speedY *= -1;
+  }
+
+  if(
+    ball.x-ball.radius < player1.x+80 &&
+    ball.y > player1.y &&
+    ball.y < player1.y+120
+  ){
+    ball.speedX *= -1;
+  }
+
+  if(
+    ball.x+ball.radius > player2.x &&
+    ball.y > player2.y &&
+    ball.y < player2.y+120
+  ){
+    ball.speedX *= -1;
+  }
+
+  if(ball.x < 0){
+    player2.score++;
+    resetBall();
+  }
+
+  if(ball.x > canvas.width){
+    player1.score++;
+    resetBall();
+  }
+}
+
+function resetBall(){
+
+  ball.x = canvas.width/2;
+  ball.y = canvas.height/2;
+
+  ball.speedX *= -1;
+
+  ball.speedY = (Math.random()*6)-3;
+}
+
+function update(){
+
+  movePlayers();
+  moveBall();
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  drawBackgroundClouds();
+  drawCenterLine();
+
+  drawCloud(player1.x,player1.y);
+  drawCloud(player2.x,player2.y);
+
+  drawBall();
+  drawScore();
+
+  requestAnimationFrame(update);
+}
+
+update();
+</script>
+
 </body>
 </html>
+

@@ -1,478 +1,623 @@
+O erro aconteceu porque o HTML original não tinha as novas estruturas completas integradas.
+Aqui está a versão corrigida COMPLETA funcionando com:
+
+* ✅ Tela de menu
+* ✅ Singleplayer
+* ✅ Multiplayer
+* ✅ Botão “Voltar ao Menu”
+* ✅ Área da pontuação separada das bordas
+* ✅ Visual pastel rosa
+* ✅ Layout organizado
+
+```html id="sky-pong-final"
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sky Pong</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+<title>Sky Pong</title>
 
-    body {
-      background: linear-gradient(to bottom, #ffd6ec, #ffc0dd);
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+<style>
 
-    .menu-screen {
-      position: absolute;
-      inset: 0;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
 
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+body{
+  background:linear-gradient(to bottom,#ffd6ec,#ffc0dd);
+  height:100vh;
+  overflow:hidden;
 
-      background: linear-gradient(to bottom, #ffd6ec, #ffc0dd);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 
-      z-index: 100;
-    }
+/* MENU */
 
-    .menu-box {
-      width: 500px;
+.menu-screen{
+  position:absolute;
+  inset:0;
 
-      padding: 40px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 
-      border-radius: 30px;
+  background:linear-gradient(to bottom,#ffd6ec,#ffc0dd);
 
-      background: rgba(255,255,255,0.25);
+  z-index:100;
+}
 
-      border: 4px solid #6bb7ff;
+.menu-box{
+  width:500px;
 
-      backdrop-filter: blur(10px);
+  padding:40px;
 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+  border-radius:30px;
 
-      gap: 25px;
+  background:rgba(255,255,255,0.25);
 
-      box-shadow: 0 0 30px rgba(0,0,0,0.15);
-    }
+  border:4px solid #6bb7ff;
 
-    .game-title {
-      font-size: 70px;
-      color: white;
-      font-weight: bold;
-      text-shadow: 4px 4px #6bb7ff;
-    }
+  backdrop-filter:blur(10px);
 
-    .subtitle {
-      color: white;
-      font-size: 18px;
-      text-shadow: 2px 2px #6bb7ff;
-    }
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 
-    .mode-title {
-      margin-top: 10px;
-      color: white;
-      font-size: 22px;
-      font-weight: bold;
-      text-shadow: 2px 2px #6bb7ff;
-    }
+  gap:25px;
 
-    .menu-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-    }
+  box-shadow:0 0 30px rgba(0,0,0,0.15);
+}
 
-    button {
-      padding: 16px;
+.game-title{
+  font-size:70px;
+  color:white;
+  font-weight:bold;
 
-      border: none;
-      border-radius: 16px;
+  text-shadow:4px 4px #6bb7ff;
+}
 
-      background: white;
+.subtitle{
+  color:white;
+  font-size:18px;
 
-      border: 3px solid #6bb7ff;
+  text-shadow:2px 2px #6bb7ff;
+}
 
-      color: #4c8ed9;
+.mode-title{
+  color:white;
+  font-size:22px;
+  font-weight:bold;
 
-      font-size: 18px;
-      font-weight: bold;
+  text-shadow:2px 2px #6bb7ff;
+}
 
-      cursor: pointer;
+.menu-buttons{
+  width:100%;
 
-      transition: 0.2s;
-    }
+  display:flex;
+  flex-direction:column;
 
-    button:hover {
-      transform: scale(1.03);
-      background: #eef7ff;
-    }
+  gap:15px;
+}
 
-    .game-container {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 25px;
-    }
+button{
+  padding:16px;
 
-    .top-bar {
-      width: 1000px;
+  border:none;
+  border-radius:16px;
 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+  background:white;
 
-      background: rgba(255,255,255,0.25);
+  border:3px solid #6bb7ff;
 
-      border: 4px solid #6bb7ff;
+  color:#4c8ed9;
 
-      border-radius: 20px;
+  font-size:18px;
+  font-weight:bold;
 
-      padding: 18px 25px;
+  cursor:pointer;
 
-      backdrop-filter: blur(8px);
-    }
+  transition:0.2s;
+}
 
-    .title {
-      font-size: 36px;
-      color: white;
-      text-shadow: 3px 3px #6bb7ff;
-      font-weight: bold;
-    }
+button:hover{
+  transform:scale(1.03);
+  background:#eef7ff;
+}
 
-    .scoreboard {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-    }
+/* JOGO */
 
-    .score {
-      font-size: 42px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 2px 2px #6bb7ff;
-    }
+.game-container{
+  display:none;
 
-    .game-area {
-      padding: 18px;
+  flex-direction:column;
+  align-items:center;
 
-      border-radius: 30px;
+  gap:25px;
+}
 
-      background: rgba(255,255,255,0.2);
+.top-bar{
+  width:1000px;
 
-      border: 4px solid #6bb7ff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 
-      backdrop-filter: blur(8px);
-    }
+  background:rgba(255,255,255,0.25);
 
-    canvas {
-      display: block;
+  border:4px solid #6bb7ff;
 
-      border-radius: 20px;
+  border-radius:22px;
 
-      background: linear-gradient(to bottom, #ffdff1, #ffc9e2);
+  padding:20px 30px;
 
-      border: 4px solid white;
+  backdrop-filter:blur(10px);
+}
 
-      box-shadow: 0 0 25px rgba(0,0,0,0.15);
-    }
+.title{
+  font-size:34px;
+  color:white;
+  font-weight:bold;
 
-    .controls {
-      color: white;
-      font-size: 15px;
-      text-shadow: 1px 1px #6bb7ff;
-    }
-  </style>
+  text-shadow:3px 3px #6bb7ff;
+}
+
+.score-wrapper{
+  padding:12px 35px;
+
+  border-radius:20px;
+
+  background:rgba(255,255,255,0.18);
+
+  border:3px solid rgba(255,255,255,0.5);
+}
+
+.scoreboard{
+  display:flex;
+  align-items:center;
+
+  gap:20px;
+}
+
+.score{
+  font-size:42px;
+  color:white;
+  font-weight:bold;
+
+  text-shadow:2px 2px #6bb7ff;
+}
+
+.right-controls{
+  display:flex;
+  align-items:center;
+
+  gap:15px;
+}
+
+.controls{
+  color:white;
+  font-size:14px;
+
+  text-shadow:1px 1px #6bb7ff;
+}
+
+.menu-btn{
+  padding:12px 18px;
+  font-size:15px;
+}
+
+.game-area{
+  padding:18px;
+
+  border-radius:30px;
+
+  background:rgba(255,255,255,0.2);
+
+  border:4px solid #6bb7ff;
+
+  backdrop-filter:blur(8px);
+}
+
+canvas{
+  display:block;
+
+  border-radius:20px;
+
+  background:linear-gradient(to bottom,#ffdff1,#ffc9e2);
+
+  border:4px solid white;
+
+  box-shadow:0 0 25px rgba(0,0,0,0.15);
+}
+
+</style>
 </head>
 
 <body>
 
-  <!-- MENU -->
-  <div class="menu-screen" id="menuScreen">
+<!-- MENU -->
 
-    <div class="menu-box">
+<div class="menu-screen" id="menuScreen">
 
-      <div class="game-title">
-        SKY PONG
-      </div>
+  <div class="menu-box">
 
-      <div class="subtitle">
-        Ping Pong com estética de céu pastel
-      </div>
+    <div class="game-title">
+      SKY PONG
+    </div>
 
-      <div class="mode-title">
-        Escolha um modo
-      </div>
+    <div class="subtitle">
+      Ping Pong pastel
+    </div>
 
-      <div class="menu-buttons">
+    <div class="mode-title">
+      Escolha um modo
+    </div>
 
-        <button onclick="startGame('single')">
-          ☁ Singleplayer
-        </button>
+    <div class="menu-buttons">
 
-        <button onclick="startGame('multi')">
-          ☁ Multiplayer
-        </button>
+      <button onclick="startGame('single')">
+        Singleplayer
+      </button>
 
-      </div>
+      <button onclick="startGame('multi')">
+        Multiplayer
+      </button>
 
     </div>
 
   </div>
 
-  <!-- JOGO -->
-  <div class="game-container" id="gameContainer">
+</div>
 
-    <div class="top-bar">
+<!-- JOGO -->
 
-      <div class="title">
-        SKY PONG
-      </div>
+<div class="game-container" id="gameContainer">
+
+  <div class="top-bar">
+
+    <div class="title">
+      SKY PONG
+    </div>
+
+    <div class="score-wrapper">
 
       <div class="scoreboard">
+
         <div class="score" id="scoreLeft">0</div>
+
         <div class="score">:</div>
+
         <div class="score" id="scoreRight">0</div>
+
       </div>
+
+    </div>
+
+    <div class="right-controls">
 
       <div class="controls">
         W/S • ↑/↓
       </div>
 
-    </div>
+      <button class="menu-btn" onclick="backToMenu()">
+        Menu
+      </button>
 
-    <div class="game-area">
-      <canvas id="gameCanvas" width="1000" height="600"></canvas>
     </div>
 
   </div>
 
-  <script>
+  <div class="game-area">
 
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+    <canvas id="gameCanvas" width="1000" height="600"></canvas>
 
-    const menuScreen = document.getElementById("menuScreen");
-    const gameContainer = document.getElementById("gameContainer");
+  </div>
 
-    let gameStarted = false;
-    let gameMode = "single";
+</div>
 
-    function startGame(mode) {
+<script>
 
-      gameMode = mode;
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-      menuScreen.style.display = "none";
-      gameContainer.style.display = "flex";
+const menuScreen = document.getElementById("menuScreen");
+const gameContainer = document.getElementById("gameContainer");
 
-      resetBall();
+let gameMode = "single";
+let gameStarted = false;
 
-      gameStarted = true;
+/* START GAME */
+
+function startGame(mode){
+
+  gameMode = mode;
+
+  menuScreen.style.display = "none";
+  gameContainer.style.display = "flex";
+
+  scoreLeft = 0;
+  scoreRight = 0;
+
+  updateScore();
+
+  resetBall();
+
+  gameStarted = true;
+}
+
+/* VOLTAR MENU */
+
+function backToMenu(){
+
+  gameStarted = false;
+
+  menuScreen.style.display = "flex";
+  gameContainer.style.display = "none";
+
+  scoreLeft = 0;
+  scoreRight = 0;
+
+  updateScore();
+
+  resetBall();
+}
+
+/* CONFIG */
+
+const paddleWidth = 15;
+const paddleHeight = 120;
+
+/* PLAYER */
+
+let leftPaddle = {
+  x:20,
+  y:240,
+  width:paddleWidth,
+  height:paddleHeight,
+  speed:7
+};
+
+let rightPaddle = {
+  x:965,
+  y:240,
+  width:paddleWidth,
+  height:paddleHeight,
+  speed:7
+};
+
+/* BALL */
+
+let ball = {
+  x:500,
+  y:300,
+  radius:12,
+  speedX:6,
+  speedY:6
+};
+
+/* SCORE */
+
+let scoreLeft = 0;
+let scoreRight = 0;
+
+/* KEYS */
+
+const keys = {};
+
+document.addEventListener("keydown",(e)=>{
+  keys[e.key] = true;
+});
+
+document.addEventListener("keyup",(e)=>{
+  keys[e.key] = false;
+});
+
+/* UPDATE SCORE */
+
+function updateScore(){
+
+  document.getElementById("scoreLeft").textContent = scoreLeft;
+  document.getElementById("scoreRight").textContent = scoreRight;
+}
+
+/* RESET BALL */
+
+function resetBall(){
+
+  ball.x = canvas.width / 2;
+  ball.y = canvas.height / 2;
+
+  ball.speedX = Math.random() > 0.5 ? 6 : -6;
+  ball.speedY = Math.random() > 0.5 ? 6 : -6;
+}
+
+/* DRAW */
+
+function drawPaddle(paddle){
+
+  ctx.fillStyle = "white";
+  ctx.strokeStyle = "#6bb7ff";
+
+  ctx.lineWidth = 4;
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    paddle.x,
+    paddle.y,
+    paddle.width,
+    paddle.height,
+    20
+  );
+
+  ctx.fill();
+  ctx.stroke();
+}
+
+function drawBall(){
+
+  ctx.fillStyle = "white";
+  ctx.strokeStyle = "#6bb7ff";
+
+  ctx.lineWidth = 4;
+
+  ctx.beginPath();
+
+  ctx.arc(
+    ball.x,
+    ball.y,
+    ball.radius,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.fill();
+  ctx.stroke();
+}
+
+/* UPDATE */
+
+function update(){
+
+  if(!gameStarted) return;
+
+  /* LEFT */
+
+  if(keys["w"] && leftPaddle.y > 0){
+    leftPaddle.y -= leftPaddle.speed;
+  }
+
+  if(keys["s"] && leftPaddle.y < canvas.height - leftPaddle.height){
+    leftPaddle.y += leftPaddle.speed;
+  }
+
+  /* RIGHT */
+
+  if(gameMode === "multi"){
+
+    if(keys["ArrowUp"] && rightPaddle.y > 0){
+      rightPaddle.y -= rightPaddle.speed;
     }
 
-    const paddleWidth = 15;
-    const paddleHeight = 120;
-
-    let leftPaddle = {
-      x: 20,
-      y: canvas.height / 2 - paddleHeight / 2,
-      width: paddleWidth,
-      height: paddleHeight,
-      speed: 7
-    };
-
-    let rightPaddle = {
-      x: canvas.width - 35,
-      y: canvas.height / 2 - paddleHeight / 2,
-      width: paddleWidth,
-      height: paddleHeight,
-      speed: 7
-    };
-
-    let ball = {
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      radius: 12,
-      speedX: 6,
-      speedY: 6
-    };
-
-    let scoreLeft = 0;
-    let scoreRight = 0;
-
-    const keys = {};
-
-    document.addEventListener("keydown", (e) => {
-      keys[e.key] = true;
-    });
-
-    document.addEventListener("keyup", (e) => {
-      keys[e.key] = false;
-    });
-
-    function updateScore() {
-      document.getElementById("scoreLeft").textContent = scoreLeft;
-      document.getElementById("scoreRight").textContent = scoreRight;
+    if(keys["ArrowDown"] && rightPaddle.y < canvas.height - rightPaddle.height){
+      rightPaddle.y += rightPaddle.speed;
     }
 
-    function resetBall() {
-      ball.x = canvas.width / 2;
-      ball.y = canvas.height / 2;
+  }else{
 
-      ball.speedX = Math.random() > 0.5 ? 6 : -6;
-      ball.speedY = Math.random() > 0.5 ? 6 : -6;
+    let center = rightPaddle.y + rightPaddle.height / 2;
+
+    if(center < ball.y - 35){
+      rightPaddle.y += 5;
     }
 
-    function drawPaddle(paddle) {
-
-      ctx.fillStyle = "white";
-      ctx.strokeStyle = "#6bb7ff";
-      ctx.lineWidth = 4;
-
-      ctx.beginPath();
-
-      ctx.roundRect(
-        paddle.x,
-        paddle.y,
-        paddle.width,
-        paddle.height,
-        20
-      );
-
-      ctx.fill();
-      ctx.stroke();
+    if(center > ball.y + 35){
+      rightPaddle.y -= 5;
     }
+  }
 
-    function drawBall() {
+  /* MOVE BALL */
 
-      ctx.fillStyle = "white";
-      ctx.strokeStyle = "#6bb7ff";
-      ctx.lineWidth = 4;
+  ball.x += ball.speedX;
+  ball.y += ball.speedY;
 
-      ctx.beginPath();
-      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  /* WALL */
 
-      ctx.fill();
-      ctx.stroke();
-    }
+  if(
+    ball.y - ball.radius < 0 ||
+    ball.y + ball.radius > canvas.height
+  ){
+    ball.speedY *= -1;
+  }
 
-    function update() {
+  /* COLLISION LEFT */
 
-      if (!gameStarted) return;
+  if(
+    ball.x - ball.radius < leftPaddle.x + leftPaddle.width &&
+    ball.y > leftPaddle.y &&
+    ball.y < leftPaddle.y + leftPaddle.height
+  ){
+    ball.speedX *= -1.05;
+  }
 
-      // Jogador esquerdo
-      if (keys["w"] && leftPaddle.y > 0) {
-        leftPaddle.y -= leftPaddle.speed;
-      }
+  /* COLLISION RIGHT */
 
-      if (keys["s"] && leftPaddle.y < canvas.height - leftPaddle.height) {
-        leftPaddle.y += leftPaddle.speed;
-      }
+  if(
+    ball.x + ball.radius > rightPaddle.x &&
+    ball.y > rightPaddle.y &&
+    ball.y < rightPaddle.y + rightPaddle.height
+  ){
+    ball.speedX *= -1.05;
+  }
 
-      // Multiplayer ou IA
-      if (gameMode === "multi") {
+  /* SCORE */
 
-        if (keys["ArrowUp"] && rightPaddle.y > 0) {
-          rightPaddle.y -= rightPaddle.speed;
-        }
+  if(ball.x < 0){
 
-        if (keys["ArrowDown"] && rightPaddle.y < canvas.height - rightPaddle.height) {
-          rightPaddle.y += rightPaddle.speed;
-        }
-
-      } else {
-
-        let center = rightPaddle.y + rightPaddle.height / 2;
-
-        if (center < ball.y - 35) {
-          rightPaddle.y += 5;
-        }
-
-        if (center > ball.y + 35) {
-          rightPaddle.y -= 5;
-        }
-      }
-
-      // Movimento da bola
-      ball.x += ball.speedX;
-      ball.y += ball.speedY;
-
-      // Colisão teto/chão
-      if (
-        ball.y - ball.radius < 0 ||
-        ball.y + ball.radius > canvas.height
-      ) {
-        ball.speedY *= -1;
-      }
-
-      // Colisão esquerda
-      if (
-        ball.x - ball.radius < leftPaddle.x + leftPaddle.width &&
-        ball.y > leftPaddle.y &&
-        ball.y < leftPaddle.y + leftPaddle.height
-      ) {
-        ball.speedX *= -1.05;
-      }
-
-      // Colisão direita
-      if (
-        ball.x + ball.radius > rightPaddle.x &&
-        ball.y > rightPaddle.y &&
-        ball.y < rightPaddle.y + rightPaddle.height
-      ) {
-        ball.speedX *= -1.05;
-      }
-
-      // Pontuação
-      if (ball.x < 0) {
-        scoreRight++;
-        updateScore();
-        resetBall();
-      }
-
-      if (ball.x > canvas.width) {
-        scoreLeft++;
-        updateScore();
-        resetBall();
-      }
-    }
-
-    function draw() {
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Linha central
-      ctx.strokeStyle = "rgba(255,255,255,0.5)";
-      ctx.lineWidth = 4;
-      ctx.setLineDash([12, 16]);
-
-      ctx.beginPath();
-      ctx.moveTo(canvas.width / 2, 0);
-      ctx.lineTo(canvas.width / 2, canvas.height);
-      ctx.stroke();
-
-      ctx.setLineDash([]);
-
-      drawPaddle(leftPaddle);
-      drawPaddle(rightPaddle);
-      drawBall();
-    }
-
-    function gameLoop() {
-
-      update();
-      draw();
-
-      requestAnimationFrame(gameLoop);
-    }
-
+    scoreRight++;
     updateScore();
-    gameLoop();
 
-  </script>
+    resetBall();
+  }
+
+  if(ball.x > canvas.width){
+
+    scoreLeft++;
+    updateScore();
+
+    resetBall();
+  }
+}
+
+/* RENDER */
+
+function draw(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  /* CENTER LINE */
+
+  ctx.strokeStyle = "rgba(255,255,255,0.5)";
+  ctx.lineWidth = 4;
+
+  ctx.setLineDash([12,16]);
+
+  ctx.beginPath();
+
+  ctx.moveTo(canvas.width/2,0);
+  ctx.lineTo(canvas.width/2,canvas.height);
+
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+
+  drawPaddle(leftPaddle);
+  drawPaddle(rightPaddle);
+
+  drawBall();
+}
+
+/* LOOP */
+
+function gameLoop(){
+
+  update();
+  draw();
+
+  requestAnimationFrame(gameLoop);
+}
+
+updateScore();
+gameLoop();
+
+</script>
 
 </body>
 </html>
+```

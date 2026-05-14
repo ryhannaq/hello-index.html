@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -12,7 +13,7 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Arial, sans-serif;
+  font-family:Arial,sans-serif;
 }
 
 body{
@@ -119,7 +120,7 @@ button:hover{
   background:#eef7ff;
 }
 
-/* JOGO */
+/* GAME */
 
 .game-container{
   display:none;
@@ -266,7 +267,7 @@ canvas{
 
 </div>
 
-<!-- JOGO -->
+<!-- GAME -->
 
 <div class="game-container" id="gameContainer">
 
@@ -323,7 +324,7 @@ const gameContainer = document.getElementById("gameContainer");
 let gameMode = "single";
 let gameStarted = false;
 
-const maxSpeed = 12;
+const maxSpeed = 10;
 
 /* START GAME */
 
@@ -366,7 +367,7 @@ function backToMenu(){
 const paddleWidth = 15;
 const paddleHeight = 120;
 
-/* PLAYER */
+/* PLAYERS */
 
 let leftPaddle = {
   x:20,
@@ -391,7 +392,7 @@ let ball = {
   y:300,
   radius:12,
   speedX:6,
-  speedY:4
+  speedY:3
 };
 
 /* SCORE */
@@ -411,7 +412,7 @@ document.addEventListener("keyup",(e)=>{
   keys[e.key] = false;
 });
 
-/* UPDATE SCORE */
+/* SCORE */
 
 function updateScore(){
 
@@ -430,7 +431,7 @@ function resetBall(){
   ball.speedY = (Math.random() * 4) - 2;
 }
 
-/* DRAW */
+/* DRAW PADDLE */
 
 function drawPaddle(paddle){
 
@@ -438,6 +439,9 @@ function drawPaddle(paddle){
   ctx.strokeStyle = "#6bb7ff";
 
   ctx.lineWidth = 4;
+
+  ctx.shadowColor = "#ffffff";
+  ctx.shadowBlur = 15;
 
   ctx.beginPath();
 
@@ -449,14 +453,13 @@ function drawPaddle(paddle){
     20
   );
 
-  ctx.shadowColor = "#ffffff";
-  ctx.shadowBlur = 15;
-
   ctx.fill();
   ctx.stroke();
 
   ctx.shadowBlur = 0;
 }
+
+/* DRAW BALL */
 
 function drawBall(){
 
@@ -489,18 +492,20 @@ function drawBall(){
 function handlePaddleCollision(paddle,isLeft){
 
   let collidePoint =
-  (ball.y - (paddle.y + paddle.height / 2));
+  ball.y - (paddle.y + paddle.height / 2);
 
-  collidePoint = collidePoint / (paddle.height / 2);
+  collidePoint =
+  collidePoint / (paddle.height / 2);
 
-  let angle = collidePoint * Math.PI / 4;
+  let angle =
+  collidePoint * (Math.PI / 4);
 
   let speed = Math.sqrt(
     ball.speedX * ball.speedX +
     ball.speedY * ball.speedY
   );
 
-  speed += 0.5;
+  speed += 0.3;
 
   if(speed > maxSpeed){
     speed = maxSpeed;
@@ -508,18 +513,26 @@ function handlePaddleCollision(paddle,isLeft){
 
   if(isLeft){
 
-    ball.speedX = speed * Math.cos(angle);
+    ball.speedX =
+    Math.abs(speed * Math.cos(angle));
 
-    ball.x = paddle.x + paddle.width + ball.radius;
+    ball.x =
+    paddle.x +
+    paddle.width +
+    ball.radius + 1;
 
   }else{
 
-    ball.speedX = -speed * Math.cos(angle);
+    ball.speedX =
+    -Math.abs(speed * Math.cos(angle));
 
-    ball.x = paddle.x - ball.radius;
+    ball.x =
+    paddle.x -
+    ball.radius - 1;
   }
 
-  ball.speedY = speed * Math.sin(angle);
+  ball.speedY =
+  speed * Math.sin(angle);
 }
 
 /* UPDATE */
@@ -534,7 +547,8 @@ function update(){
     leftPaddle.y -= leftPaddle.speed;
   }
 
-  if(keys["s"] && leftPaddle.y < canvas.height - leftPaddle.height){
+  if(keys["s"] &&
+  leftPaddle.y < canvas.height - leftPaddle.height){
     leftPaddle.y += leftPaddle.speed;
   }
 
@@ -546,13 +560,15 @@ function update(){
       rightPaddle.y -= rightPaddle.speed;
     }
 
-    if(keys["ArrowDown"] && rightPaddle.y < canvas.height - rightPaddle.height){
+    if(keys["ArrowDown"] &&
+    rightPaddle.y < canvas.height - rightPaddle.height){
       rightPaddle.y += rightPaddle.speed;
     }
 
   }else{
 
-    let center = rightPaddle.y + rightPaddle.height / 2;
+    let center =
+    rightPaddle.y + rightPaddle.height / 2;
 
     if(center < ball.y - 35){
       rightPaddle.y += 5;
@@ -563,14 +579,16 @@ function update(){
     }
   }
 
-  /* LIMIT AI */
+  /* LIMITS */
 
   if(rightPaddle.y < 0){
     rightPaddle.y = 0;
   }
 
-  if(rightPaddle.y > canvas.height - rightPaddle.height){
-    rightPaddle.y = canvas.height - rightPaddle.height;
+  if(rightPaddle.y >
+  canvas.height - rightPaddle.height){
+    rightPaddle.y =
+    canvas.height - rightPaddle.height;
   }
 
   /* MOVE BALL */
@@ -578,12 +596,17 @@ function update(){
   ball.x += ball.speedX;
   ball.y += ball.speedY;
 
-  /* WALL */
+  /* WALL COLLISION */
 
-  if(
-    ball.y - ball.radius < 0 ||
-    ball.y + ball.radius > canvas.height
-  ){
+  if(ball.y - ball.radius <= 0){
+
+    ball.y = ball.radius;
+    ball.speedY *= -1;
+  }
+
+  if(ball.y + ball.radius >= canvas.height){
+
+    ball.y = canvas.height - ball.radius;
     ball.speedY *= -1;
   }
 
@@ -591,13 +614,18 @@ function update(){
 
   if(
 
-    ball.x - ball.radius <
+    ball.speedX < 0 &&
+
+    ball.x - ball.radius <=
     leftPaddle.x + leftPaddle.width &&
 
-    ball.y + ball.radius >
+    ball.x - ball.radius >=
+    leftPaddle.x &&
+
+    ball.y + ball.radius >=
     leftPaddle.y &&
 
-    ball.y - ball.radius <
+    ball.y - ball.radius <=
     leftPaddle.y + leftPaddle.height
 
   ){
@@ -608,13 +636,18 @@ function update(){
 
   if(
 
-    ball.x + ball.radius >
+    ball.speedX > 0 &&
+
+    ball.x + ball.radius >=
     rightPaddle.x &&
 
-    ball.y + ball.radius >
+    ball.x + ball.radius <=
+    rightPaddle.x + rightPaddle.width &&
+
+    ball.y + ball.radius >=
     rightPaddle.y &&
 
-    ball.y - ball.radius <
+    ball.y - ball.radius <=
     rightPaddle.y + rightPaddle.height
 
   ){
@@ -654,7 +687,6 @@ function checkWinner(){
       alert("Player 1 venceu!");
       backToMenu();
     },100);
-
   }
 
   if(scoreRight >= 5){
@@ -673,7 +705,7 @@ function checkWinner(){
   }
 }
 
-/* RENDER */
+/* DRAW */
 
 function draw(){
 
@@ -718,3 +750,4 @@ gameLoop();
 
 </body>
 </html>
+```
